@@ -17,4 +17,4 @@ const {createHash} = require('crypto');
 
 const md5 = (i) => createHash('md5').update(i).digest('hex');
 
-module.exports = {md5};
+module.exports = md5;

@@ -69,7 +69,7 @@ const chunkAlgolia = (arr) => {
   return chunked;
 };
 
-(async () => {
+async function index() {
   const addLocaleToUrl = (locale, url) => {
     if (urlToLocale[url]) {
       urlToLocale[url].push(locale);
@@ -89,23 +89,23 @@ const chunkAlgolia = (arr) => {
   const raw = fs.readFileSync('dist/pages.json', 'utf-8');
   /** @type {AlgoliaItem[]} */
   const algoliaData = JSON.parse(raw)
-    .map((/** @type {AlgoliaItem} */ e) => {
-      addLocaleToUrl(e.locale, e.url);
+    .map((/** @type {AlgoliaItem} */ item) => {
+      addLocaleToUrl(item.locale, item.url);
       // Set date of when object is being added to algolia.
-      e.indexedOn = indexedOn.getTime();
-      return e;
+      item.indexedOn = indexedOn.getTime();
+      return item;
     })
-    .map((/** @type {AlgoliaItem} */ e) => {
-      if (e.locale === defaultLocale) {
-        const locales = urlToLocale[e.url];
-        e.locales = [
-          e.locale,
+    .map((/** @type {AlgoliaItem} */ item) => {
+      if (item.locale === defaultLocale) {
+        const locales = urlToLocale[item.url];
+        item.locales = [
+          item.locale,
           ...supportedLocales.filter((i) => locales.indexOf(i) === -1),
         ];
       } else {
-        e.locales = [e.locale];
+        item.locales = [item.locale];
       }
-      return e;
+      return item;
     });
 
   const chunkedAlgoliaData = chunkAlgolia(algoliaData);
@@ -143,7 +143,9 @@ const chunkAlgolia = (arr) => {
   console.log('Deleted old data.');
 
   console.log('Done!');
-})().catch((err) => {
+}
+
+index().catch((err) => {
   console.error(err);
   throw err;
 });

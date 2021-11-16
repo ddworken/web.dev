@@ -16,4 +16,4 @@
 
 const stringify = (i) => JSON.stringify(i);
 
-module.exports = {stringify};
+module.exports = stringify;

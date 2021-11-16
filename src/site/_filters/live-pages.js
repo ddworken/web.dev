@@ -30,12 +30,8 @@ function livePages(posts) {
       livePosts(post) &&
       post.url &&
       post.data.title &&
-      !(
-        post.data.disable_algolia === true ||
-        post.data.disable_algolia === 'true'
-      ) &&
-      !post.data.noindex,
+      !(post.data.noindex === true || post.data.noindex === 'true'),
   );
 }
 
-module.exports = {livePages};
+module.exports = livePages;
