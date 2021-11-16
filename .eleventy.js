@@ -19,7 +19,6 @@ const pluginRss = require('@11ty/eleventy-plugin-rss');
 const pluginSyntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight');
 const yaml = require('js-yaml');
 const fs = require('fs');
-const striptags = require('striptags');
 
 const toc = require('eleventy-plugin-toc');
 const markdown = require('./src/site/_plugins/markdown');
@@ -72,9 +71,10 @@ const tags = require('./src/site/_collections/tags');
 // Filters
 const consoleDump = require('./src/site/_filters/console-dump');
 const {i18n} = require('./src/site/_filters/i18n');
-const {getDefaultUrl, getRelativePath} = require('./src/site/_filters/urls');
+const {getRelativePath} = require('./src/site/_filters/urls');
 const {memoize, findByUrl} = require('./src/site/_filters/find-by-url');
 const pathSlug = require('./src/site/_filters/path-slug');
+const algoliaItem = require('./src/site/_filters/algolia-item');
 const containsTag = require('./src/site/_filters/contains-tag');
 const expandAuthors = require('./src/site/_filters/expand-authors');
 const githubLink = require('./src/site/_filters/github-link');
@@ -83,7 +83,6 @@ const htmlDateString = require('./src/site/_filters/html-date-string');
 const isNewContent = require('./src/site/_filters/is-new-content');
 const livePages = require('./src/site/_filters/live-pages');
 const md = require('./src/site/_filters/md');
-const md5 = require('./src/site/_filters/md5');
 const pagedNavigation = require('./src/site/_filters/paged-navigation');
 const postsLighthouseJson = require('./src/site/_filters/posts-lighthouse-json');
 const prettyDate = require('./src/site/_filters/pretty-date');
@@ -177,10 +176,10 @@ module.exports = function (config) {
   // ----------------------------------------------------------------------------
   config.addFilter('consoleDump', consoleDump);
   config.addFilter('i18n', i18n);
-  config.addFilter('getDefaultUrl', getDefaultUrl);
   config.addFilter('getRelativePath', getRelativePath);
   config.addFilter('findByUrl', findByUrl);
   config.addFilter('pathSlug', pathSlug);
+  config.addFilter('algoliaItem', algoliaItem);
   config.addFilter('containsTag', containsTag);
   config.addFilter('expandAuthors', expandAuthors);
   config.addFilter('githubLink', githubLink);
@@ -190,7 +189,6 @@ module.exports = function (config) {
   config.addFilter('isNewContent', isNewContent);
   config.addFilter('livePages', livePages);
   config.addFilter('md', md);
-  config.addFilter('md5', md5);
   config.addFilter('navigation', navigation);
   config.addNunjucksAsyncFilter('siteRender', siteRender);
   config.addFilter('pagedNavigation', pagedNavigation);
@@ -200,7 +198,6 @@ module.exports = function (config) {
   config.addFilter('slugify', slugify);
   config.addFilter('stringify', stringify);
   config.addFilter('stripBlog', stripBlog);
-  config.addFilter('striptags', striptags);
   config.addFilter('getPaths', getPaths);
   config.addFilter('strip', strip);
   config.addFilter('courseToc', courseToc);
