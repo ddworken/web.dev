@@ -3,7 +3,7 @@ noindex: true
 permalink: "/pages.json"
 ---
 {% if site.env === 'prod' %}
-  {% set posts = collections.all | livePages %}
+  {% set posts = collections.all | algoliaIndexable %}
 {% else %}
   {% set posts = [] %}
 {% endif %}

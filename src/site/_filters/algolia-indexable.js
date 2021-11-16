@@ -21,10 +21,10 @@
 const {livePosts} = require('./live-posts');
 
 /**
- * @param {EleventyCollectionItem[]} posts An array of eleventy post object.
- * @return {EleventyCollectionItem[]} The posts that should go be shown.
+ * @param {EleventyCollectionItem[]} posts An array of 11ty post objects.
+ * @return {EleventyCollectionItem[]} The posts that should go be searchable in algolia.
  */
-function livePages(posts) {
+function algoliaIndexable(posts) {
   return posts.filter(
     (post) =>
       livePosts(post) &&
@@ -34,4 +34,4 @@ function livePages(posts) {
   );
 }
 
-module.exports = livePages;
+module.exports = algoliaIndexable;
