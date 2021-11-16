@@ -70,16 +70,7 @@ const chunkAlgolia = (arr) => {
 };
 
 async function index() {
-  const addLocaleToUrl = (locale, url) => {
-    if (urlToLocale[url]) {
-      urlToLocale[url].push(locale);
-    } else {
-      urlToLocale[url] = [locale];
-    }
-  };
   const indexedOn = new Date();
-  /** @type {{ [url: string]: string[]}} */
-  const urlToLocale = {};
 
   if (!process.env.ALGOLIA_APP_ID || !process.env.ALGOLIA_API_KEY) {
     console.warn('Missing Algolia environment variables, skipping indexing.');
@@ -88,25 +79,32 @@ async function index() {
 
   const raw = fs.readFileSync('dist/pages.json', 'utf-8');
   /** @type {AlgoliaItem[]} */
-  const algoliaData = JSON.parse(raw)
-    .map((/** @type {AlgoliaItem} */ item) => {
-      addLocaleToUrl(item.locale, item.url);
-      // Set date of when object is being added to algolia.
-      item.indexedOn = indexedOn.getTime();
-      return item;
-    })
-    .map((/** @type {AlgoliaItem} */ item) => {
-      if (item.locale === defaultLocale) {
-        const locales = urlToLocale[item.url];
-        item.locales = [
-          item.locale,
-          ...supportedLocales.filter((i) => locales.indexOf(i) === -1),
-        ];
-      } else {
-        item.locales = [item.locale];
-      }
-      return item;
-    });
+  const pagesData = JSON.parse(raw);
+
+  /** @type {{ [url: string]: string[]}} */
+  const urlToLocale = pagesData.reduce((urlLocalesDict, {url, locale}) => {
+    if (urlLocalesDict[url]) {
+      urlLocalesDict[url].push(locale);
+    } else {
+      urlLocalesDict[url] = [locale];
+    }
+
+    return urlLocalesDict;
+  }, {});
+
+  const algoliaData = pagesData.map((/** @type {AlgoliaItem} */ item) => {
+    if (item.locale === defaultLocale) {
+      const locales = urlToLocale[item.url];
+      item.locales = [
+        item.locale,
+        ...supportedLocales.filter((i) => locales.indexOf(i) === -1),
+      ];
+    } else {
+      item.locales = [item.locale];
+    }
+    item.indexedOn = indexedOn.getTime();
+    return item;
+  });
 
   const chunkedAlgoliaData = chunkAlgolia(algoliaData);
   const postsCount = algoliaData.length;
